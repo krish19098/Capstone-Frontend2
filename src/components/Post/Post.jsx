@@ -16,6 +16,10 @@ const Post = ({ data }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(data.comments || []);
 
+  useEffect(() => {
+    fetchUsernames();
+  }, [comments]);
+
   const handleLike = () => {
     likePost(data._id, user._id);
     setLiked((prev) => !prev);
@@ -45,9 +49,6 @@ const Post = ({ data }) => {
     }
   };
 
-  useEffect(() => {
-    fetchUsernames();
-  }, [comments]);
   const fetchUsernames = async () => {
     try {
       const updatedComments = await Promise.all(
@@ -66,6 +67,9 @@ const Post = ({ data }) => {
     }
   };
 
+  useEffect(() => {
+    fetchUsernames();
+  }, [fetchUsernames]);
   return (
     <div className="Post">
       <img
