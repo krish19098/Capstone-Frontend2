@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Post.css";
 import CommentIcon from "../../img/comment.png";
 import Share from "../../img/share.png";
@@ -16,23 +16,37 @@ const Post = ({ data }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(data.comments || []);
 
+  const fetchUsernames = useCallback(async () => {
+    try {
+      const updatedComments = await Promise.all(
+        comments.map(async (comment) => {
+          const response = await getUser(comment.userId);
+          const username = response.data.username;
+          return {
+            ...comment,
+            username: username,
+          };
+        })
+      );
+      setComments(updatedComments);
+    } catch (error) {
+      console.error("Error fetching usernames:", error);
+    }
+  }, [comments]);
+
   useEffect(() => {
     fetchUsernames();
-  }, [comments]);
+  }, [fetchUsernames, comments]);
 
   const handleLike = () => {
     likePost(data._id, user._id);
     setLiked((prev) => !prev);
-    liked ? setLikes((prev) => prev - 1) : setLikes((prev) => prev + 1);
+    setLikes((prevLikes) => (liked ? prevLikes - 1 : prevLikes + 1));
   };
 
   const handleCommentIconClick = () => {
     setShowCommentInput((prev) => !prev);
   };
-
-  // const handleCommentChange = (event) => {
-  //   setComment(event.target.value);
-  // };
 
   const handleCommentSubmit = async () => {
     try {
@@ -49,27 +63,6 @@ const Post = ({ data }) => {
     }
   };
 
-  const fetchUsernames = async () => {
-    try {
-      const updatedComments = await Promise.all(
-        comments.map(async (comment) => {
-          const response = await getUser(comment.userId);
-          const username = response.data.username;
-          return {
-            ...comment,
-            username: username,
-          };
-        })
-      );
-      setComments(updatedComments);
-    } catch (error) {
-      console.error("Error fetching usernames:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsernames();
-  }, [fetchUsernames]);
   return (
     <div className="Post">
       <img
