@@ -16,10 +16,6 @@ const Post = ({ data }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(data.comments || []);
 
-  useEffect(() => {
-    fetchUsernames();
-  }, []);
-
   const handleLike = () => {
     likePost(data._id, user._id);
     setLiked((prev) => !prev);
@@ -30,9 +26,9 @@ const Post = ({ data }) => {
     setShowCommentInput((prev) => !prev);
   };
 
-  const handleCommentChange = (event) => {
-    setComment(event.target.value);
-  };
+  // const handleCommentChange = (event) => {
+  //   setComment(event.target.value);
+  // };
 
   const handleCommentSubmit = async () => {
     try {
@@ -49,6 +45,9 @@ const Post = ({ data }) => {
     }
   };
 
+  useEffect(() => {
+    fetchUsernames();
+  }, [comments]);
   const fetchUsernames = async () => {
     try {
       const updatedComments = await Promise.all(

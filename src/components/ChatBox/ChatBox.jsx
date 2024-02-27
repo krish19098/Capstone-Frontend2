@@ -76,7 +76,7 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
     if (receivedMessage !== null && receivedMessage.chatId === chat._id) {
       setMessages([...messages, receivedMessage]);
     }
-  }, [receivedMessage, chat]);
+  }, [receivedMessage, chat, messages]);
 
   const scroll = useRef();
   const imageRef = useRef();
