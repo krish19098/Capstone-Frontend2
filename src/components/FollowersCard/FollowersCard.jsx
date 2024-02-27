@@ -21,9 +21,12 @@ const FollowersCard = ({ location }) => {
     <div className="FollowersCard">
       <h3>Discover connections 🌐</h3>
 
-      {persons.map((person, id) => {
-        if (person._id !== user._id) return <User person={person} key={id} />;
-      })}
+      {persons
+        .filter((person) => person._id !== user._id)
+        .map((person, id) => (
+          <User person={person} key={id} />
+        ))}
+
       {!location ? (
         <span onClick={() => setModalOpened(true)}>Show more</span>
       ) : (
