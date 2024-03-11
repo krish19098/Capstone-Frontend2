@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./Post.css";
 import CommentIcon from "../../img/comment.png";
 import Share from "../../img/share.png";
@@ -16,31 +16,30 @@ const Post = ({ data }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(data.comments || []);
 
-  const fetchUsernames = useCallback(async () => {
+  useEffect(() => {
+    fetchUsernamesForComments(comments);
+  }, []);
+
+  const fetchUsernamesForComments = async (commentsToFetch) => {
     try {
-      const updatedComments = await Promise.all(
-        comments.map(async (comment) => {
-          const response = await getUser(comment.userId);
-          const username = response.data.username;
-          return {
-            ...comment,
-            username: username,
-          };
+      const newCommentsWithUsernames = await Promise.all(
+        commentsToFetch.map(async (comment) => {
+          if (!comment.username) {
+            const response = await getUser(comment.userId);
+            return { ...comment, username: response.data.username };
+          }
+          return comment;
         })
       );
-      setComments(updatedComments);
+      setComments(newCommentsWithUsernames);
     } catch (error) {
       console.error("Error fetching usernames:", error);
     }
-  }, [comments]);
-
-  useEffect(() => {
-    fetchUsernames();
-  }, [fetchUsernames, comments]);
+  };
 
   const handleLike = () => {
     likePost(data._id, user._id);
-    setLiked((prev) => !prev);
+    setLiked(!liked);
     setLikes((prevLikes) => (liked ? prevLikes - 1 : prevLikes + 1));
   };
 
@@ -54,10 +53,10 @@ const Post = ({ data }) => {
       setComment("");
       const newComment = {
         userId: user._id,
-        username: user.username,
         text: comment,
       };
-      setComments((prevComments) => [...prevComments, newComment]);
+      setComments([...comments, newComment]);
+      fetchUsernamesForComments([newComment]);
     } catch (error) {
       console.error("Error posting comment:", error);
     }
