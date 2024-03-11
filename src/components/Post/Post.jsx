@@ -4,8 +4,7 @@ import CommentIcon from "../../img/comment.png";
 import Share from "../../img/share.png";
 import HeartIcon from "../../img/like.png";
 import NotLikeIcon from "../../img/notlike.png";
-import { likePost, postComment } from "../../api/PostsRequests";
-import { getUser } from "../../api/UserRequests";
+import { likePost, postComment, getUser } from "../../api/PostsRequests";
 import { useSelector } from "react-redux";
 
 const Post = ({ data }) => {
@@ -18,6 +17,7 @@ const Post = ({ data }) => {
 
   useEffect(() => {
     fetchUsernamesForComments(comments);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchUsernamesForComments = async (commentsToFetch) => {
