@@ -4,7 +4,8 @@ import CommentIcon from "../../img/comment.png";
 import Share from "../../img/share.png";
 import HeartIcon from "../../img/like.png";
 import NotLikeIcon from "../../img/notlike.png";
-import { likePost, postComment, getUser } from "../../api/PostsRequests";
+import { likePost, postComment } from "../../api/PostsRequests";
+import { getUser } from "../../api/UserRequests";
 import { useSelector } from "react-redux";
 
 const Post = ({ data }) => {
